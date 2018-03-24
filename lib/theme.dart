@@ -6,3 +6,7 @@ class Colors {
   static const Color pictonBlue = const Color(0xFF4EC6FF);
   static const Color waterMelon = const Color(0xFFFF5475);
 }
+
+class Ratios {
+  static const double tileAspect = 0.72;
+}

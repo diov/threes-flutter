@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:threes_game/game_grid.dart';
 import 'package:threes_game/theme.dart' as Theme;
 
 void main() => runApp(MyApp());
@@ -15,9 +16,9 @@ class MyApp extends StatelessWidget {
       home: Scaffold(
         body: Center(
           child: Container(
-            padding: EdgeInsets.all(10.0),
+            padding: EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
             color: Theme.Colors.lightGreen,
-            child: _HomePageBackground(),
+            child: _GameWidget(),
           ),
         ),
       ),
@@ -25,12 +26,17 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class _HomePageBackground extends StatelessWidget {
-  const _HomePageBackground();
+class _GameWidget extends StatelessWidget {
+  const _GameWidget();
 
   @override
   Widget build(BuildContext context) {
-    return _generateBackground();
+    return Stack(
+      children: <Widget>[
+        _generateBackground(),
+        GameGrid(),
+      ],
+    );
   }
 
   Widget _generateBackground() {
@@ -38,9 +44,7 @@ class _HomePageBackground extends StatelessWidget {
       primary: false,
       shrinkWrap: true,
       crossAxisCount: 4,
-      mainAxisSpacing: 15.0,
-      crossAxisSpacing: 15.0,
-      childAspectRatio: 0.7,
+      childAspectRatio: Theme.Ratios.tileAspect,
       padding: EdgeInsets.all(4.0),
       children: _generateBackgroundTile(16),
     );
@@ -51,8 +55,9 @@ class _HomePageBackground extends StatelessWidget {
         .generate(
             count,
             (i) => Container(
+              margin: EdgeInsets.symmetric(vertical: 6.0, horizontal: 5.0),
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(3.0)),
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
                       color: Theme.Colors.greyGreen),
                 ))
         .toList();
