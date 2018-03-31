@@ -5,7 +5,7 @@ import 'package:threes_game/theme.dart' as Theme;
 class GameTile extends StatelessWidget {
   final int score;
 
-  GameTile({@required this.score});
+  GameTile({@required this.score}) : super(key: Key(score.toString()));
 
   @override
   Widget build(BuildContext context) {

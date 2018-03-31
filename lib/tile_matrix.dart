@@ -85,14 +85,14 @@ class TileMatrix {
     print(matrix);
   }
 
-  _attemptMoveTile(int i, int j, int iPrev, int jPrev) {
+  _attemptMoveTile(int i, int j, int nextI, int nextJ) {
     // Empty space
     if (matrix[i][j] == 0) {
       return;
     }
 
     // Twins
-    if (matrix[i][j] == matrix[iPrev][jPrev]) {
+    if (matrix[i][j] == matrix[nextI][nextJ]) {
       // Not actually twins
       if (matrix[i][j] == 1 || matrix[i][j] == 2) {
         return;
@@ -100,20 +100,20 @@ class TileMatrix {
 
       // Okay actually twins
       matrix[i][j] = 0;
-      matrix[iPrev][jPrev] *= 2;
-      moveTitles.add(Tuple3<int, int, int>(i, j, matrix[iPrev][jPrev]));
+      matrix[nextI][nextJ] *= 2;
+      moveTitles.add(Tuple3<int, int, int>(i, j, matrix[nextI][nextJ]));
     } else {
       // Move to empty space
-      if (matrix[iPrev][jPrev] == 0) {
-        matrix[iPrev][jPrev] = matrix[i][j];
+      if (matrix[nextI][nextJ] == 0) {
+        matrix[nextI][nextJ] = matrix[i][j];
         matrix[i][j] = 0;
-        moveTitles.add(Tuple3<int, int, int>(i, j, matrix[iPrev][jPrev]));
-      } else if ((matrix[i][j] == 1 && matrix[iPrev][jPrev] == 2) ||
-          (matrix[i][j] == 2 && matrix[iPrev][jPrev] == 1)) {
+        moveTitles.add(Tuple3<int, int, int>(i, j, matrix[nextI][nextJ]));
+      } else if ((matrix[i][j] == 1 && matrix[nextI][nextJ] == 2) ||
+          (matrix[i][j] == 2 && matrix[nextI][nextJ] == 1)) {
         // 1 + 2 = 3
-        matrix[iPrev][jPrev] = 3;
+        matrix[nextI][nextJ] = 3;
         matrix[i][j] = 0;
-        moveTitles.add(Tuple3<int, int, int>(i, j, matrix[iPrev][jPrev]));
+        moveTitles.add(Tuple3<int, int, int>(i, j, matrix[nextI][nextJ]));
       }
     }
   }
