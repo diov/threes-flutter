@@ -2,27 +2,70 @@ import 'package:flutter/material.dart';
 import 'package:threes_game/theme.dart' as Theme;
 import 'package:threes_game/tile.dart';
 import 'package:threes_game/tile_matrix.dart';
+import 'package:threes_game/redux.dart';
+import 'package:threes_game/store.dart';
+import 'package:threes_game/state.dart';
+import 'package:threes_game/action.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return new ThreeRedux(
+      child: new MaterialApp(
       title: 'Threes powered by Flutter',
-      theme: ThemeData(
+      theme: new ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Scaffold(
-        body: Center(
-          child: Container(
-            padding: EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
+      home: new Scaffold(
+        body: new Center(
+          child: new Container(
             color: Theme.Colors.lightGreen,
-            child: MyHomePage(),
+            child: new ThreeHomePage(),
           ),
         ),
       ),
+    ),
+    );
+  }
+}
+
+class ThreeHomePage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return new _ThreeHomeState();
+  }
+}
+
+class _ThreeHomeState extends State<ThreeHomePage> {
+  @override
+  Widget build(BuildContext context) {
+    return new GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onHorizontalDragEnd: (DragEndDetails d) {
+        if (d.primaryVelocity > 0) {
+          store.dispatch(context, new ThreeAction.moveRight());
+          setState(() {});
+          // ThreeRedux.dispatch(context, new ThreeAction.moveRight());
+        } else {
+          store.dispatch(context, new ThreeAction.moveLeft());
+          setState(() {});
+          // ThreeRedux.dispatch(context, new ThreeAction.moveLeft());
+        }
+      },
+      onVerticalDragEnd: (DragEndDetails d) {
+        if (d.primaryVelocity > 0) {
+          store.dispatch(context, new ThreeAction.moveDown());
+          setState(() {});
+          // ThreeRedux.dispatch(context, new ThreeAction.moveDown());
+        } else {
+          store.dispatch(context, new ThreeAction.moveUp());
+          setState(() {});
+          // ThreeRedux.dispatch(context, new ThreeAction.moveUp());
+        }
+      },
+      child: new MyHomePage()
     );
   }
 }
@@ -30,13 +73,11 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _HomeState();
+    return new _HomeState();
   }
 }
 
 class _HomeState extends State<MyHomePage> with TickerProviderStateMixin {
-  TileMatrix matrix = TileMatrix(4);
-  List<Widget> tiles = List<Widget>();
   AnimationController _slideController;
 
   _HomeState() {
@@ -44,38 +85,22 @@ class _HomeState extends State<MyHomePage> with TickerProviderStateMixin {
       duration: new Duration(milliseconds: 1000),
       vsync: this,
     );
-    _generateTiles();
   }
 
   @override
   Widget build(BuildContext context) {
     _recycleAnimationControllers();
 
-    return AspectRatio(
+    // StoreUpdate<BoardState, ThreeAction> currentState = ThreeRedux.stateOf(context);
+    // TileMatrix matrix = new TileMatrix.fromList(currentState.state.tiles);
+    TileMatrix matrix = new TileMatrix.fromList(store.currentState.tiles);
+    List<Widget> tiles = _generateTiles(matrix);
+
+    return new AspectRatio(
       aspectRatio: 1.0,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onHorizontalDragEnd: (DragEndDetails d) {
-          if (d.primaryVelocity > 0) {
-            dispatch(Direction.right);
-          } else {
-            dispatch(Direction.left);
-          }
-        },
-        onVerticalDragEnd: (DragEndDetails d) {
-          if (d.primaryVelocity > 0) {
-            dispatch(Direction.down);
-          } else {
-            dispatch(Direction.up);
-          }
-        },
-        child: Container(
-          color: Theme.Colors.greyGreen,
-          child: Stack(
-            children: tiles,
-          ),
-        ),
-      ),
+      child: new Stack(
+        children: tiles
+      )
     );
   }
 
@@ -91,7 +116,8 @@ class _HomeState extends State<MyHomePage> with TickerProviderStateMixin {
     );
   }
 
-  _generateTiles() {
+  List<Widget> _generateTiles(TileMatrix matrix) {
+    List<Widget> tiles = List<Widget>();
     matrix.matrix.asMap().forEach((i, value) {
       value.asMap().forEach((j, item) {
         tiles.add(Tile(
@@ -105,6 +131,7 @@ class _HomeState extends State<MyHomePage> with TickerProviderStateMixin {
         ));
       });
     });
+    return tiles;
   }
 
   dispatch(Direction direction) {
@@ -113,41 +140,3 @@ class _HomeState extends State<MyHomePage> with TickerProviderStateMixin {
     });
   }
 }
-
-//class _GameWidget extends StatelessWidget {
-//  const _GameWidget();
-//
-//  @override
-//  Widget build(BuildContext context) {
-//    return Stack(
-//      children: <Widget>[
-//        _generateBackground(),
-//        GameGrid(),
-//      ],
-//    );
-//  }
-//
-//  Widget _generateBackground() {
-//    return GridView.count(
-//      primary: false,
-//      shrinkWrap: true,
-//      crossAxisCount: 4,
-//      childAspectRatio: Theme.Ratios.tileAspect,
-//      padding: EdgeInsets.all(4.0),
-//      children: _generateBackgroundTile(16),
-//    );
-//  }
-//
-//  List<Widget> _generateBackgroundTile(int count) {
-//    return Iterable
-//        .generate(
-//            count,
-//            (i) => Container(
-//              margin: EdgeInsets.symmetric(vertical: 6.0, horizontal: 5.0),
-//                  decoration: BoxDecoration(
-//                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
-//                      color: Theme.Colors.greyGreen),
-//                ))
-//        .toList();
-//  }
-//}

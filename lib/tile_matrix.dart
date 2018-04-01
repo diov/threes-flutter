@@ -10,7 +10,12 @@ class TileMatrix {
     _initTwoDimensionalArray();
   }
 
-  final int dimension;
+  TileMatrix.fromList(List<List<int>> list) {
+    matrix = list;
+    dimension = list.length;
+  }
+
+  int dimension;
 
   List<List<int>> matrix;
 
