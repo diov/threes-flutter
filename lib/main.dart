@@ -31,23 +31,38 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class ThreeHomePage extends StatelessWidget {
+class ThreeHomePage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return new _ThreeHomeState();
+  }
+}
+
+class _ThreeHomeState extends State<ThreeHomePage> {
   @override
   Widget build(BuildContext context) {
     return new GestureDetector(
       behavior: HitTestBehavior.opaque,
       onHorizontalDragEnd: (DragEndDetails d) {
         if (d.primaryVelocity > 0) {
-          ThreeRedux.dispatch(context, new ThreeAction.moveRight());
+          store.dispatch(context, new ThreeAction.moveRight());
+          setState(() {});
+          // ThreeRedux.dispatch(context, new ThreeAction.moveRight());
         } else {
-          ThreeRedux.dispatch(context, new ThreeAction.moveLeft());
+          store.dispatch(context, new ThreeAction.moveLeft());
+          setState(() {});
+          // ThreeRedux.dispatch(context, new ThreeAction.moveLeft());
         }
       },
       onVerticalDragEnd: (DragEndDetails d) {
         if (d.primaryVelocity > 0) {
-          ThreeRedux.dispatch(context, new ThreeAction.moveDown());
+          store.dispatch(context, new ThreeAction.moveDown());
+          setState(() {});
+          // ThreeRedux.dispatch(context, new ThreeAction.moveDown());
         } else {
-          ThreeRedux.dispatch(context, new ThreeAction.moveUp());
+          store.dispatch(context, new ThreeAction.moveUp());
+          setState(() {});
+          // ThreeRedux.dispatch(context, new ThreeAction.moveUp());
         }
       },
       child: new MyHomePage()
@@ -76,8 +91,9 @@ class _HomeState extends State<MyHomePage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     _recycleAnimationControllers();
 
-    StoreUpdate<BoardState, ThreeAction> currentState = ThreeRedux.stateOf(context);
-    TileMatrix matrix = new TileMatrix.fromList(currentState.state.tiles);
+    // StoreUpdate<BoardState, ThreeAction> currentState = ThreeRedux.stateOf(context);
+    // TileMatrix matrix = new TileMatrix.fromList(currentState.state.tiles);
+    TileMatrix matrix = new TileMatrix.fromList(store.currentState.tiles);
     List<Widget> tiles = _generateTiles(matrix);
 
     return new AspectRatio(

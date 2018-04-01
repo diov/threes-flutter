@@ -1,9 +1,38 @@
 import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
+import 'package:threes_game/state.dart';
+import 'package:threes_game/action.dart';
+import 'package:threes_game/redux.dart';
 
+typedef void Dispatch<ActionType>(ActionType action);
 typedef StateType Reducer<StateType, ActionType>(StateType state, ActionType action);
 typedef void OnStoreUpdate<ActionType>(StoreUpdate update, Dispatch<ActionType> dispatcher);
+
+class ThreeStore {
+  BoardState currentState;
+
+  ThreeStore(this.currentState);
+
+  void dispatch(BuildContext context, ThreeAction action) {
+    switch (action.type) {
+      case ThreeActionType.Left:
+        currentState = currentState.moveLeft();
+        break;
+      case ThreeActionType.up:
+        currentState = currentState.moveUp();
+        break;
+      case ThreeActionType.right:
+        currentState = currentState.moveRight();
+        break;
+      case ThreeActionType.down:
+        currentState = currentState.moveDown();
+        break;
+    }
+  }
+}
+
+ThreeStore store = new ThreeStore(BoardState.initiatalState());
 
 class Store<StateType, ActionType> extends StatefulWidget {
   final Widget child;
@@ -15,7 +44,7 @@ class Store<StateType, ActionType> extends StatefulWidget {
     @required this.child,
     @required this.initialState,
     @required this.reducer,
-    this.middleware = const<OnStoreUpdate>[]
+    // this.middleware = const<OnStoreUpdate>[]
   });
 
   @override
