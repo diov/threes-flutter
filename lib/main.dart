@@ -40,17 +40,14 @@ class _HomeState extends State<MyHomePage> with TickerProviderStateMixin {
   AnimationController _slideController;
 
   _HomeState() {
-    _slideController = new AnimationController(
-      duration: new Duration(milliseconds: 1000),
-      vsync: this,
-    );
+    _recycleAnimationControllers();
     _generateTiles();
   }
 
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: 1.0,
+      aspectRatio: Theme.Ratios.tileAspect,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onHorizontalDragEnd: (DragEndDetails d) {
@@ -132,5 +129,6 @@ class _HomeState extends State<MyHomePage> with TickerProviderStateMixin {
       });
       _slideController.forward();
     });
+    print("totalScore: ${matrix.calculateTotalScore()}");
   }
 }

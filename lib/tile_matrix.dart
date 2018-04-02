@@ -144,27 +144,63 @@ class TileMatrix {
     if (movedTiles.isEmpty) {
       return;
     }
+
     final random = Random();
-    final randomPosition = random.nextInt(3);
-    final score = random.nextInt(2) + 1;
+    final score = random.nextInt(3) + 1;
+    List<int> emptyList = List<int>();
+    int fromI;
+    int fromJ;
+    int destI;
+    int destJ;
+
     switch (gesture) {
       case Direction.left:
-        _addMovedTile(randomPosition, 4, randomPosition, 3, score);
-        matrix[randomPosition][3] = score;
+        fromJ = 4;
+        destJ = 3;
+        for (int i = 0; i < dimension; i++) {
+          if (matrix[i][destJ] == 0) {
+            emptyList.add(i);
+          }
+        }
+        fromI = emptyList[random.nextInt(emptyList.length)];
+        destI = fromI;
         break;
       case Direction.up:
-        _addMovedTile(4, randomPosition, 3, randomPosition, score);
-        matrix[3][randomPosition] = score;
+        fromI = 4;
+        destI = 3;
+        for (int j = 0; j < dimension; j++) {
+          if (matrix[destI][j] == 0) {
+            emptyList.add(j);
+          }
+        }
+        fromJ = emptyList[random.nextInt(emptyList.length)];
+        destJ = fromJ;
         break;
       case Direction.right:
-        _addMovedTile(randomPosition, -1, randomPosition, 0, score);
-        matrix[randomPosition][0] = score;
+        fromJ = -1;
+        destJ = 0;
+        for (int i = 0; i < dimension; i++) {
+          if (matrix[i][destJ] == 0) {
+            emptyList.add(i);
+          }
+        }
+        fromI = emptyList[random.nextInt(emptyList.length)];
+        destI = fromI;
         break;
       case Direction.down:
-        _addMovedTile(-1, randomPosition, 0, randomPosition, score);
-        matrix[0][randomPosition] = score;
+        fromI = -1;
+        destI = 0;
+        for (int j = 0; j < dimension; j++) {
+          if (matrix[destI][j] == 0) {
+            emptyList.add(j);
+          }
+        }
+        fromJ = emptyList[random.nextInt(emptyList.length)];
+        destJ = fromJ;
         break;
     }
+    _addMovedTile(fromI, fromJ, destI, destJ, score);
+    matrix[destI][destJ] = score;
   }
 
   _mergeAnimatedTiles() {
@@ -180,5 +216,18 @@ class TileMatrix {
   _addMovedTile(int fromI, int fromJ, int destI, int destJ, int score) {
     movedTiles.add(TileAction(
         fromI: fromI, fromJ: fromJ, destI: destI, destJ: destJ, score: score));
+  }
+
+  int _scoreTile(int tileScore) {
+    final score = pow(3, (log(tileScore / 3) / log(2) + 1));
+    return score.floor();
+  }
+
+  int calculateTotalScore() {
+    int score = 0;
+    matrix.expand((i) => i).toList().forEach((tileScore) {
+      score += _scoreTile(tileScore);
+    });
+    return score;
   }
 }
