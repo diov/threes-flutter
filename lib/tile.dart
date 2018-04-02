@@ -6,7 +6,8 @@ import 'package:threes_game/theme.dart' as Theme;
 
 class Tile extends StatefulWidget {
   Tile(this.score, this.dimension, this.controller,
-      {@required this.fromI, @required this.fromJ, this.destI, this.destJ});
+      {@required this.fromI, @required this.fromJ, this.destI, this.destJ})
+      : super(key: Key("$fromI$fromJ"));
 
   final int score;
   final int fromI;
@@ -15,12 +16,10 @@ class Tile extends StatefulWidget {
   final int destI;
   final int destJ;
   final AnimationController controller;
-  _TileState titleState;
 
   @override
   State<StatefulWidget> createState() {
-    titleState = _TileState();
-    return titleState;
+    return _TileState();
   }
 }
 
@@ -62,7 +61,7 @@ class _TileState extends State<Tile> {
 class _Tile extends StatelessWidget {
   final int score;
 
-  _Tile({@required this.score}) : super(key: Key(score.toString()));
+  _Tile({@required this.score});
 
   @override
   Widget build(BuildContext context) {

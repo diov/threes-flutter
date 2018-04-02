@@ -49,8 +49,6 @@ class _HomeState extends State<MyHomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    _recycleAnimationControllers();
-
     return AspectRatio(
       aspectRatio: 1.0,
       child: GestureDetector(
@@ -79,18 +77,23 @@ class _HomeState extends State<MyHomePage> with TickerProviderStateMixin {
     );
   }
 
-  startAnimate() {
-    _slideController.forward();
-  }
-
   _recycleAnimationControllers() {
     _slideController?.dispose();
     _slideController = new AnimationController(
       duration: new Duration(milliseconds: 150),
       vsync: this,
     );
+    _slideController.addStatusListener((state) {
+      if (state == AnimationStatus.completed) {
+        setState(() {
+          tiles.clear();
+          _generateTiles();
+        });
+      }
+    });
   }
 
+  /// generate tiles based on [TileMatrix]'s matrix data.
   _generateTiles() {
     matrix.matrix.asMap().forEach((i, value) {
       value.asMap().forEach((j, item) {
@@ -107,47 +110,27 @@ class _HomeState extends State<MyHomePage> with TickerProviderStateMixin {
     });
   }
 
+  /// dispatch user gesture.
+  /// 1. compute matrix move action in [TileMatrix].
+  /// 2. display the animation base on [TileMatrix]'s animatedTiles.
+  /// 3. display all tiles base on [TileMatrix]'s matrix.
   dispatch(Direction direction) {
+    _recycleAnimationControllers();
+    tiles.clear();
     setState(() {
       matrix.dispatch(direction);
+      matrix.animatedTiles.forEach((action) {
+        tiles.add(Tile(
+          action.score,
+          4,
+          _slideController,
+          fromI: action.fromI,
+          fromJ: action.fromJ,
+          destI: action.destI,
+          destJ: action.destJ,
+        ));
+      });
+      _slideController.forward();
     });
   }
 }
-
-//class _GameWidget extends StatelessWidget {
-//  const _GameWidget();
-//
-//  @override
-//  Widget build(BuildContext context) {
-//    return Stack(
-//      children: <Widget>[
-//        _generateBackground(),
-//        GameGrid(),
-//      ],
-//    );
-//  }
-//
-//  Widget _generateBackground() {
-//    return GridView.count(
-//      primary: false,
-//      shrinkWrap: true,
-//      crossAxisCount: 4,
-//      childAspectRatio: Theme.Ratios.tileAspect,
-//      padding: EdgeInsets.all(4.0),
-//      children: _generateBackgroundTile(16),
-//    );
-//  }
-//
-//  List<Widget> _generateBackgroundTile(int count) {
-//    return Iterable
-//        .generate(
-//            count,
-//            (i) => Container(
-//              margin: EdgeInsets.symmetric(vertical: 6.0, horizontal: 5.0),
-//                  decoration: BoxDecoration(
-//                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
-//                      color: Theme.Colors.greyGreen),
-//                ))
-//        .toList();
-//  }
-//}
