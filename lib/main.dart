@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:threes_game/theme.dart' as Theme;
 import 'package:threes_game/game_tile.dart';
+import 'package:threes_game/platform_channel.dart';
+import 'package:threes_game/theme.dart' as Theme;
 import 'package:threes_game/tile_matrix.dart';
 
 void main() => runApp(ThreesApp());
@@ -35,13 +38,14 @@ class GamePanel extends StatefulWidget {
 }
 
 class _GamePanelState extends State<GamePanel> with TickerProviderStateMixin {
-  TileMatrix matrix = TileMatrix(4);
+  TileMatrix tileMatrix = TileMatrix(4);
   List<Widget> tiles = List<Widget>();
   AnimationController _slideController;
 
   _GamePanelState() {
     _recycleAnimationController();
     _generateTiles();
+    _setupPlatformMessageHandler();
   }
 
   @override
@@ -93,7 +97,7 @@ class _GamePanelState extends State<GamePanel> with TickerProviderStateMixin {
 
   /// generate tiles based on [TileMatrix]'s matrix data.
   _generateTiles() {
-    matrix.matrix.asMap().forEach((i, value) {
+    tileMatrix.matrix.asMap().forEach((i, value) {
       value.asMap().forEach((j, item) {
         tiles.add(GameTile(
           item,
@@ -113,12 +117,15 @@ class _GamePanelState extends State<GamePanel> with TickerProviderStateMixin {
   /// 2. display the animation base on [TileMatrix]'s animatedTiles.
   /// 3. display all tiles base on [TileMatrix]'s matrix after animation
   /// finished.
+  ///
+  /// send game score to platform through [PlatformChannel] after every
+  /// gesture finished.
   dispatch(Direction direction) {
     _recycleAnimationController();
     tiles.clear();
     setState(() {
-      matrix.dispatch(direction);
-      matrix.animatedTiles.forEach((action) {
+      tileMatrix.dispatch(direction);
+      tileMatrix.animatedTiles.forEach((action) {
         tiles.add(GameTile(
           action.score,
           4,
@@ -131,12 +138,25 @@ class _GamePanelState extends State<GamePanel> with TickerProviderStateMixin {
       });
       _slideController.forward();
     });
-    print("totalScore: ${matrix.calculateTotalScore()}");
+    PlatformChannel.displayGameScore(tileMatrix.calculateTotalScore());
   }
 
   @override
   void dispose() {
     _slideController?.dispose();
     super.dispose();
+  }
+
+  void _setupPlatformMessageHandler() {
+    PlatformChannel.messageChannel.setMessageHandler(_handlePlatformMessage);
+  }
+
+  Future<String> _handlePlatformMessage(String message) async {
+    setState(() {
+      tiles.clear();
+      tileMatrix.initMatrix();
+      _generateTiles();
+    });
+    return "";
   }
 }
