@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:threes_game/theme.dart' as Theme;
-import 'package:threes_game/tile.dart';
+import 'package:threes_game/game_tile.dart';
 import 'package:threes_game/tile_matrix.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(ThreesApp());
 
-class MyApp extends StatelessWidget {
+class ThreesApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
           child: Container(
             padding: EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
             color: Theme.Colors.lightGreen,
-            child: MyHomePage(),
+            child: GamePanel(),
           ),
         ),
       ),
@@ -27,20 +27,20 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class GamePanel extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _HomeState();
+    return _GamePanelState();
   }
 }
 
-class _HomeState extends State<MyHomePage> with TickerProviderStateMixin {
+class _GamePanelState extends State<GamePanel> with TickerProviderStateMixin {
   TileMatrix matrix = TileMatrix(4);
   List<Widget> tiles = List<Widget>();
   AnimationController _slideController;
 
-  _HomeState() {
-    _recycleAnimationControllers();
+  _GamePanelState() {
+    _recycleAnimationController();
     _generateTiles();
   }
 
@@ -74,7 +74,8 @@ class _HomeState extends State<MyHomePage> with TickerProviderStateMixin {
     );
   }
 
-  _recycleAnimationControllers() {
+  /// dispose existed AnimationController and reset it.
+  _recycleAnimationController() {
     _slideController?.dispose();
     _slideController = new AnimationController(
       duration: new Duration(milliseconds: 150),
@@ -94,7 +95,7 @@ class _HomeState extends State<MyHomePage> with TickerProviderStateMixin {
   _generateTiles() {
     matrix.matrix.asMap().forEach((i, value) {
       value.asMap().forEach((j, item) {
-        tiles.add(Tile(
+        tiles.add(GameTile(
           item,
           4,
           _slideController,
@@ -110,14 +111,15 @@ class _HomeState extends State<MyHomePage> with TickerProviderStateMixin {
   /// dispatch user gesture.
   /// 1. compute matrix move action in [TileMatrix].
   /// 2. display the animation base on [TileMatrix]'s animatedTiles.
-  /// 3. display all tiles base on [TileMatrix]'s matrix.
+  /// 3. display all tiles base on [TileMatrix]'s matrix after animation
+  /// finished.
   dispatch(Direction direction) {
-    _recycleAnimationControllers();
+    _recycleAnimationController();
     tiles.clear();
     setState(() {
       matrix.dispatch(direction);
       matrix.animatedTiles.forEach((action) {
-        tiles.add(Tile(
+        tiles.add(GameTile(
           action.score,
           4,
           _slideController,
@@ -130,5 +132,11 @@ class _HomeState extends State<MyHomePage> with TickerProviderStateMixin {
       _slideController.forward();
     });
     print("totalScore: ${matrix.calculateTotalScore()}");
+  }
+
+  @override
+  void dispose() {
+    _slideController?.dispose();
+    super.dispose();
   }
 }

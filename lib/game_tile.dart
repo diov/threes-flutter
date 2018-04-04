@@ -4,8 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:threes_game/theme.dart' as Theme;
 
-class Tile extends StatefulWidget {
-  Tile(this.score, this.dimension, this.controller,
+class GameTile extends StatefulWidget {
+  GameTile(this.score, this.dimension, this.controller,
       {@required this.fromI, @required this.fromJ, this.destI, this.destJ})
       : super(key: Key("$fromI$fromJ"));
 
@@ -23,7 +23,7 @@ class Tile extends StatefulWidget {
   }
 }
 
-class _TileState extends State<Tile> {
+class _TileState extends State<GameTile> {
   startAnimate() {
     setState(() {
       widget.controller.forward();
