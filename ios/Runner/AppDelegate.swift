@@ -55,21 +55,23 @@ import Flutter
 
         let controller: FlutterViewController = window?.rootViewController as! FlutterViewController;
 
-        scoreLabel.frame = CGRect(x: 40, y: 100, width: 100, height: 40)
+        scoreLabel.frame = CGRect(x: 40, y: 80, width: 100, height: 50)
         scoreLabel.text = "Score: 0"
-        scoreLabel.backgroundColor = UIColor(red: 66 / 255.0, green: 185 / 255.0, blue: 254 / 255.0, alpha: 1.0)
-        scoreLabel.layer.cornerRadius = 20
+        scoreLabel.backgroundColor = UIColor(red: 177 / 255.0, green: 212 / 255.0, blue: 212 / 255.0, alpha: 1.0)
+        scoreLabel.layer.cornerRadius = 10
         scoreLabel.clipsToBounds = true
         scoreLabel.textAlignment = .center
         scoreLabel.textColor = UIColor.white
+        scoreLabel.font = UIFont.systemFont(ofSize: 20)
         controller.view.addSubview(scoreLabel)
 
         stopButton.backgroundColor = UIColor(red: 251 / 255.0, green: 57 / 255.0, blue: 98 / 255.0, alpha: 1.0)
-        stopButton.layer.cornerRadius = 20
+        stopButton.layer.cornerRadius = 10
         stopButton.clipsToBounds = true
         stopButton.setTitle("Stop", for: .normal)
-        stopButton.frame = CGRect(x: screenWidth - 140, y: 100, width: 100, height: 40)
+        stopButton.frame = CGRect(x: screenWidth - 140, y: 80, width: 100, height: 50)
         stopButton.addTarget(self, action: #selector(stopThreesGame), for: .touchUpInside)
+        stopButton.titleLabel?.font = UIFont.systemFont(ofSize: 20)
         controller.view.addSubview(stopButton)
     }
 }
