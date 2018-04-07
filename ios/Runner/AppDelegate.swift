@@ -22,6 +22,7 @@ import Flutter
         if "displayGameScore" == call.method {
             if let score = call.arguments as? Int {
                 self.displayGameScore(score)
+                result("displayGameScore")
             }
         } else {
             result(FlutterMethodNotImplemented)
@@ -42,8 +43,8 @@ import Flutter
     }
 
     @objc
-    private func stopThreesGame() {
-        basicSenderChannel?.sendMessage("stopThreesGame")
+    private func resetThreesGame() {
+        basicSenderChannel?.sendMessage("resetThreesGame")
         displayGameScore(0)
     }
 
@@ -68,9 +69,9 @@ import Flutter
         stopButton.backgroundColor = UIColor(red: 251 / 255.0, green: 57 / 255.0, blue: 98 / 255.0, alpha: 1.0)
         stopButton.layer.cornerRadius = 10
         stopButton.clipsToBounds = true
-        stopButton.setTitle("Stop", for: .normal)
+        stopButton.setTitle("Reset", for: .normal)
         stopButton.frame = CGRect(x: screenWidth - 140, y: 80, width: 100, height: 50)
-        stopButton.addTarget(self, action: #selector(stopThreesGame), for: .touchUpInside)
+        stopButton.addTarget(self, action: #selector(resetThreesGame), for: .touchUpInside)
         stopButton.titleLabel?.font = UIFont.systemFont(ofSize: 20)
         controller.view.addSubview(stopButton)
     }
