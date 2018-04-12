@@ -19,8 +19,7 @@ class PlatformChannel {
   /// TODO: finish matrix game over algorithm.
   static Future<Null> displayGameOver() async {
     try {
-      final Object result =
-      await methodChannel.invokeMethod("displayGameOver");
+      final Object result = await methodChannel.invokeMethod("displayGameOver");
     } on PlatformException catch (e) {
       print(e.toString());
     }

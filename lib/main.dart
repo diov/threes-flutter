@@ -20,7 +20,7 @@ class ThreesApp extends StatelessWidget {
       home: Scaffold(
         body: Center(
           child: Container(
-            padding: EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
+            padding: EdgeInsets.all(8.0),
             color: Theme.Colors.lightGreen,
             child: GamePanel(),
           ),
@@ -81,8 +81,8 @@ class _GamePanelState extends State<GamePanel> with TickerProviderStateMixin {
   /// dispose existed AnimationController and reset it.
   _recycleAnimationController() {
     _slideController?.dispose();
-    _slideController = new AnimationController(
-      duration: new Duration(milliseconds: 150),
+    _slideController = AnimationController(
+      duration: Duration(milliseconds: 150),
       vsync: this,
     );
     _slideController.addStatusListener((state) {

@@ -9,7 +9,7 @@ class TileAction {
 
   @override
   String toString() {
-   return "fromI: $fromI, fromJ: $fromJ, destI: $destI, destJ: $destJ, score:"
-       " $score \n";
+    return "fromI: $fromI, fromJ: $fromJ, destI: $destI, destJ: $destJ, score:"
+        " $score \n";
   }
 }

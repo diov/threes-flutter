@@ -39,10 +39,10 @@ class _TileState extends State<GameTile> {
     final destIPosition = lerpDouble(-1.0, 1.0, widget.destI.toDouble() / step);
     final destJPosition = lerpDouble(-1.0, 1.0, widget.destJ.toDouble() / step);
 
-    Animation<Alignment> alignment = new AlignmentTween(
-            begin: new Alignment(fromJPosition, fromIPosition),
-            end: new Alignment(destJPosition, destIPosition))
-        .animate(new CurvedAnimation(
+    Animation<Alignment> alignment = AlignmentTween(
+      begin: Alignment(fromJPosition, fromIPosition),
+      end: Alignment(destJPosition, destIPosition),
+    ).animate(CurvedAnimation(
       curve: Curves.easeOut,
       parent: widget.controller,
     ));
